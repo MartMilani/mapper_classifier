@@ -24,13 +24,11 @@ def test(x, y):
                        filter=filter,
                        cover=cover,
                        cluster=cluster)
-    mapper.fit()
-    print("dimension = ", mapper.complex._dimension)
-
+    mapper.fit(verbose=1)
     predictor = mapp.BinaryClassifier(mapper=mapper,
                                       response_values=y,
                                       _lambda=0.4)
-    predictor.fit()
+    predictor.fit(verbose=1)
     return predictor.predict(x[[1, 500, 1000]])
 
 
@@ -40,7 +38,6 @@ def main():
     x = x[1:]  # eliminating the first row of nans
     y = np.asarray([row[3] for row in x])
     x = np.asarray([row[0:3] for row in x])
-    print(x.shape)
     test(x, y)
     return 0
 

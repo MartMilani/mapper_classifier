@@ -230,12 +230,16 @@ class SuperNode():
         intervalstoswitch = np.round(np.min([shouldswitch, maxswitch]))
 
         if verbose:
-            print('\nNumber of intervals switched for node {}: {}'.format(self._node._id, intervalstoswitch))
+            print('\nNode {}'.format(self._node._id))
+            print('Score: {}'.format(self._score))
+            print('Number of intervals to switch: {}'.format(intervalstoswitch))
 
+        howmanycollapsed = 0
         for i in range(intervalstoswitch):
             x = self._intervalscores[i]
             k = self._ks[x]
             if not k:  # this means that the interval is collapsed to the only point
+                howmanycollapsed += 1
                 continue
             neighbours = self._neighboursmatrix[x, :k+1]
             neighbours_filtervalues = self.myfiltervalues[neighbours]
@@ -243,4 +247,7 @@ class SuperNode():
             b = np.max(neighbours_filtervalues)
             self._intervals.append(Interval(x, a, b))
             if verbose:
-                print('I = ({}, {})'.format(a, b))
+                print('Filter interval actually switched: I = ({}, {})'.format(a, b))
+
+        if verbose:
+            print('{} intervals are actually collapsed to a single point'.format(howmanycollapsed))

@@ -118,7 +118,7 @@ class BinaryClassifier():
                             for x_label in intersectiondict[simplex]:
                                 x = data[x_label]
 
-                                # applying mapper-assignment rule
+                                # applying mapper-assignment rule, that depends on the cluster method
                                 if self._mapper.cluster._method == 'single':
                                     distance1 = np.min([np.linalg.norm(x-b) for b in data[supernode._pointlabels]])
                                     distance2 = np.min([np.linalg.norm(x-b) for b in data[second_supernode._pointlabels]])
@@ -136,12 +136,25 @@ class BinaryClassifier():
                         except KeyError:
                             for x_label in intersectiondict[simplex]:
                                 supernode._extrapointlabels.append(x_label)
+
+            # just for printing diagnostics
+            tot_disambiguated_mapper_graph = 0
+
+            # finalizing disambiguation
             for nodeid in self.partition:
                 supernode = self.partition[nodeid]
                 supernode._extrapointlabels = np.asarray(supernode._extrapointlabels, dtype=int)
                 supernode._pointlabels = np.append(supernode._pointlabels, supernode._extrapointlabels)
                 supernode._pointlabels = np.unique(supernode._pointlabels)
                 supernode._size = len(supernode._pointlabels)
+                if verbose:
+                    print('\nDisambiguating node {}'.format(nodeid))
+                    print('Original size: {}'.format(len(supernode._node._labels)))
+                    print('Disambiguated size: {}'.format(supernode._size))
+                    tot_disambiguated_mapper_graph += supernode._size
+            if verbose:
+                print('\nTotal number of points in the original Mapper graph: {}'.format(np.alen(self._mapper.data)))
+                print('\nTotal number of points in the disambiguated Mapper graph: {}'.format(tot_disambiguated_mapper_graph))
 
         def _initiatesupernodes(verbose):
             """Helper function
@@ -259,7 +272,6 @@ class BinaryClassifier():
             Args:
                 x (np.ndarray): one dimensional ndarray representing one data point
                 fx (float): filter value of x
-
         """
         data = self._mapper.data
         old_d = float("inf")
@@ -357,7 +369,7 @@ class BinaryClassifier():
             assert toreturn, "warning: mistake in assign()"
             return toreturn
 
-    def _predict(self, x, leave_one_out=False, index=None, verbose=False):
+    def _predict(self, x, leave_one_out=False, index=None, verbose=0):
         """Helper function called by predict()
 
         Args:
@@ -396,7 +408,6 @@ class BinaryClassifier():
         return supernode._majorityvote
 
     def predict(self, X, leave_one_out=False, verbose=False):
-        print('predicting...')
         predictions = []
         for i, x in enumerate(X):
             predictions.append(self._predict(x, leave_one_out, i, verbose))
