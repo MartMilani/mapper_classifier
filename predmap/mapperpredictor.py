@@ -16,7 +16,7 @@ class BinaryClassifier():
     Example of use:
 
         >>> from numpy import genfromtxt
-        >>> importlmapper as lm
+        >>> import lmapper as lm
         >>> from lmapper.filter import Projection
         >>> from lmapper.cover import BalancedCover
         >>> from lmapper.cluster import Linkage
@@ -32,7 +32,6 @@ class BinaryClassifier():
         >>>                    cover=cover,
         >>>                    cluster=cluster)
         >>> mapper.fit()
-        >>> print("dimension = ", mapper.complex._dimension)
         >>>
         >>> predictor = mapp.BinaryClassifier(mapper=mapper,
         >>>                                   response_values=y,
@@ -255,7 +254,7 @@ class BinaryClassifier():
                 score_list.append(supernode._score)
             print('S_min = {}, S_max = {}'.format(min(score_list), max(score_list)))
 
-    def _updatepredictions(self, verbose):
+    def _intervals_to_flip(self, verbose):
         """Helper function called by fit()
         """
         for nodeid in self.partition:
@@ -263,7 +262,7 @@ class BinaryClassifier():
             if supernode._pure:
                 continue
             else:
-                supernode._updatepredictions(self._lambda, verbose)
+                supernode._intervals_to_flip(self._lambda, verbose)
 
     def _assign(self, x, fx, leave_one_out=False, index=None):
         """Helper function called by _predict()
@@ -374,7 +373,6 @@ class BinaryClassifier():
 
         Args:
             x (np.ndarray): one dimensional ndarray representing one data point
-
         """
         fx = self._mapper.filter.for_assignment_only(x, self._mapper.data)
         if verbose:
@@ -422,7 +420,7 @@ class BinaryClassifier():
         self._partition = self._disambiguate(verbose)
         self._applyscorefunction(verbose)
         self._computeintervals(verbose)
-        self._updatepredictions(verbose)
+        self._intervals_to_flip(verbose)
         return self
 
     def plot_majority_votes(self, pos=None, edge_labels=False, node_labels=False):

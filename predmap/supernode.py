@@ -16,10 +16,8 @@ class SuperNode():
     """Class containing all the data structures and implementing all the base routines of
     the predictive Mapper algorithm.
 
-    The aim of this class is to extend the class shapeegraph.Node with attributes and
+    The aim of this class is to extend the class lmapper.complex.Node with attributes and
     methods necessary to implement the predictive Mapper algorithm.
-    Each object of this class contains a reference to one and only one shapegraph.Node().
-
 
     Attributes:
         _node (shapegraph.Node): the node in the shapegraph that each object refer to.
@@ -69,7 +67,7 @@ class SuperNode():
         """
 
     def _finduniquelabels(self, y):
-        """Function that by using the informations contained in self.shapegraph.complex._intersection_dict,
+        """Function that by using the informations contained in self.mapper.complex._intersection_dict,
         it removes form self._node._pointlabels all the points contained in at least
         one other node
         """
@@ -90,7 +88,7 @@ class SuperNode():
 
         Args:
             y (np.ndarray): array containing the response values of the whole training set
-                used to construct the shapegraph"""
+                used to construct the mapper"""
         self._responsevalues = y[self._pointlabels]
         self.myfiltervalues = self._shapegraph.filter_values[self._pointlabels]
         self._min = min(self.myfiltervalues)
@@ -221,7 +219,7 @@ class SuperNode():
         if verbose:
             pass
 
-    def _updatepredictions(self, _lambda, verbose):
+    def _intervals_to_flip(self, _lambda, verbose):
         shouldswitch = int(np.round(self._score*_lambda))
         if self._minorityvote:
             maxswitch = self._ones
