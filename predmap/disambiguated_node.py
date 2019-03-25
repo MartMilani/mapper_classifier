@@ -12,7 +12,7 @@ class Interval():
         return item < self.b and item > self.a
 
 
-class SuperNode():
+class DisambiguatedNode():
     """Class containing all the data structures and implementing all the base routines of
     the predictive Mapper algorithm.
 

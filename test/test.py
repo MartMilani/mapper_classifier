@@ -13,7 +13,7 @@ import predmap as mapp
 
 def test(x, y):
     """Basic usage"""
-    # instantiate a ShapeGraph object
+    # instantiate a Mapper object
 
     # filter = Eccentricity(exponent=2)
     filter = Projection(ax=2)
@@ -34,7 +34,7 @@ def test(x, y):
 
 def main():
     from numpy import genfromtxt
-    x = genfromtxt('/Users/martinomilani/Documents/III_semester/PACS/project/synthetic_dataset/synthetic.csv', delimiter=',')
+    x = genfromtxt('/Users/Mart/Documents/POLIMI/IV_anno/II_semestre/PACS/project/synthetic_dataset/synthetic.csv', delimiter=',')
     x = x[1:]  # eliminating the first row of nans
     y = np.asarray([row[3] for row in x])
     x = np.asarray([row[0:3] for row in x])

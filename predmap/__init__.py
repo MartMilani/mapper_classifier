@@ -7,5 +7,4 @@ if sys.hexversion < 0x03000000:
     raise ImportError('PredMap requires at least Python version 3.0.')
 del sys
 
-
-from predmap.mapperpredictor import *
+from predmap._predmap import *

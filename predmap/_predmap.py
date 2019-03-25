@@ -1,5 +1,5 @@
 import numpy as np
-from predmap.supernode import SuperNode
+from predmap.disambiguated_node import DisambiguatedNode
 import copy
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -63,7 +63,7 @@ class BinaryClassifier():
 
     def _disambiguate(self, verbose):
         """Performs the Disambiguation step.
-        Instantiates the SuperNode objects on top of Node objects and put them in
+        Instantiates the DisambiguatedNode objects on top of Node objects and put them in
         the self.partition dict.
 
         NOTE:
@@ -157,7 +157,7 @@ class BinaryClassifier():
 
         def _initiatesupernodes(verbose):
             """Helper function
-            Provided that each SuperNode has been instantiated in self.partition and the
+            Provided that each DisambiguatedNode has been instantiated in self.partition and the
             _disambiguateintersections() has been run,
                 - it finds the corresponding responsevalues
                 - it sets the majorityvotes per each supernode
@@ -184,7 +184,7 @@ class BinaryClassifier():
         for fiber in self._mapper.cover:
             for node in fiber:
                 if node._id not in duplicatednodes:
-                    supernode = SuperNode(node, fiber, self._mapper)
+                    supernode = DisambiguatedNode(node, fiber, self._mapper)
                     supernode._finduniquelabels(self._y)
                     # initialize unique labels, supernode._onlyones and supernode._onlyzeros
 
@@ -266,7 +266,7 @@ class BinaryClassifier():
 
     def _assign(self, x, fx, leave_one_out=False, index=None):
         """Helper function called by _predict()
-        Finds the SuperNode that the point x belongs to
+        Finds the DisambiguatedNode that the point x belongs to
 
             Args:
                 x (np.ndarray): one dimensional ndarray representing one data point

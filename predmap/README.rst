@@ -1,12 +1,12 @@
-Lmapper
+predmap
 -------
 
-This package implements the Mapper algorithm.
+This package implements the Mapper classifier algorithm.
 
 Example:
 
     >>> import lmapper as lm
-    >>> import predmap as pmapp
+    >>> import predmap as pm
     >>>
     >>> N = 100
     >>> d = 10
@@ -16,10 +16,11 @@ Example:
     >>>                    cluster='Linkage',
     >>>                    cover='BalancedCover)
     >>> mapper.fit()
-    >>> predictor = pmapp.BinaryClassifier(mapper=mapper,
-    >>>                                    response_values=y,
-    >>>                                    _lambda=0.015,
-    >>>                                    a=0.5,
-    >>>                                    beta=2)
+    >>> predictor = pm.BinaryClassifier(mapper=mapper,
+    >>>                                 response_values=y,
+    >>>                                 _lambda=0.015,
+    >>>                                 a=0.5,
+    >>>                                 beta=2)
     >>> predictor.fit()
-    >>> predictor.predict()
+    >>> x0 = np.random.rand(size=(1, d))
+    >>> predictor.predict(x0)
