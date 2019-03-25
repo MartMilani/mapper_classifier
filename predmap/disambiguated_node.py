@@ -82,6 +82,9 @@ class DisambiguatedNode():
         self._size = len(self._pointlabels)  # this value is only temporary! will be changed
         self._myonlyones = sum(y[self._pointlabels])
         self._myonlyzeros = self._size - self._myonlyones
+        assert self._size is not None
+        assert self._myonlyones is not None
+        assert self._myonlyzeros is not None
 
     def _findresponsevalues(self, y):
         """Helper function called by __init__()
@@ -105,6 +108,10 @@ class DisambiguatedNode():
         self._minorityvote = not self._majorityvote
         if self._ones == self._size or self._zeros == self._size:
             self._pure = True
+        assert self._ones is not None
+        assert self._zeros is not None
+        assert self._extraones is not None
+        assert self._extrazeros is not None
 
     def __init__(self, node, fiber, shapegraph):
         """
@@ -143,6 +150,7 @@ class DisambiguatedNode():
 
     def _applyscorefunction(self, a):
         self._score = a * abs(self._myonlyones - self._myonlyzeros) + (1-a) * abs(self._extraones - self._extrazeros)
+        print('score: ', self._score)
 
     def _computeintervals(self, beta=1, verbose=1):
         """This function

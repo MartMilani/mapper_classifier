@@ -152,6 +152,7 @@ class BinaryClassifier():
                     print('Disambiguated size: {}'.format(supernode._size))
                     tot_disambiguated_mapper_graph += supernode._size
             if verbose:
+                print('\nTotal number of disambiguated nodes: {}'.format(len(self.partition)))
                 print('\nTotal number of points in the original Mapper graph: {}'.format(np.alen(self._mapper.data)))
                 print('\nTotal number of points in the disambiguated Mapper graph: {}'.format(tot_disambiguated_mapper_graph))
 
@@ -243,7 +244,7 @@ class BinaryClassifier():
         for nodeid in self.partition:
             supernode = self.partition[nodeid]
             if supernode._pure:
-                continue
+                supernode._score = 0
             else:
                 supernode._applyscorefunction(self._a)
 
@@ -252,6 +253,7 @@ class BinaryClassifier():
             for nodeid in self.partition:
                 supernode = self.partition[nodeid]
                 score_list.append(supernode._score)
+            print(score_list)
             print('S_min = {}, S_max = {}'.format(min(score_list), max(score_list)))
 
     def _intervals_to_flip(self, verbose):
