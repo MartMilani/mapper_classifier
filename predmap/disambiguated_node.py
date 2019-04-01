@@ -13,22 +13,19 @@ class Interval():
 
 
 class DisambiguatedNode():
-    """Class containing all the data structures and implementing all the base routines of
-    the predictive Mapper algorithm.
-
-    The aim of this class is to extend the class lmapper.complex.Node with attributes and
+    """The aim of this class is to extend the class lmapper.complex.Node with attributes and
     methods necessary to implement the predictive Mapper algorithm.
 
     Attributes:
-        _node (shapegraph.Node): the node in the shapegraph that each object refer to.
-        _fiber (shapegraph.Fiber): the fiber in the shapegraph that this Supernode belongs
+        _node (lmapper.complex.Node): the node in the lmapper that each object refer to.
+        _fiber (lmapper.cover.Fiber): the fiber in the lmapper that this DisambiguatedNode belongs
             to.
-        _shapegraph (shapegraph.Shapegraph): the shapegraph.Shapegraph this SuperNode
+        _lmapper (lmapper._mapper.Mapper): the lmapper._mapper.Mapper object this DisambiguatedNode
             belongs to
         _pointlabels (np.ndarray): subset of _node._pointlabels containing the point
             labels of the disambiguated node i.e. the points belonging to self._node and
-            not belonging to any other node in the shapegraph. Remember that these point
-            labels are the integer indexes of the shapegraph._data matrix
+            not belonging to any other node in the Mapper. Remember that these point
+            labels are the integer indexes of the lmapper._mapper.Mapper._data matrix
         _score (float): score S that will determine how many intervals will be switched
         _responsevalues (np.ndarray): array containing the response values corresponding
             to _pointlabels
@@ -55,9 +52,9 @@ class DisambiguatedNode():
             corresponding to each point x in self._pointlabels
         _intervalscores (np.ndarray):
             _intervalscores = [4, 6, 8, ...] means that
-            densitydetector[4] = delta(shapegraph._data[pointlabels[4]]) >
-            densitydetector[6] = delta(shapegraph._data[pointlabels[6]]) >
-            densitydetector[8] = delta(shapegraph._data[pointlabels[8]]) >
+            densitydetector[4] = delta(lmapper._mapper.Mapper._data[pointlabels[4]]) >
+            densitydetector[6] = delta(lmapper._mapper.Mapper._data[pointlabels[6]]) >
+            densitydetector[8] = delta(lmapper._mapper.Mapper._data[pointlabels[8]]) >
             ...
         _pure (bool): True if node is pure i.e. it doesn't contain any switched interval
         myfiltervalues (np.ndarray): filtervalues corresponding to _pointlabels
@@ -69,12 +66,12 @@ class DisambiguatedNode():
     def _finduniquelabels(self, y):
         """Function that by using the informations contained in self.mapper.complex._intersection_dict,
         it removes form self._node._pointlabels all the points contained in at least
-        one other node
+        one other node. Called by _predmap.BinaryClassifier._disambiguate()
         """
         # initializing the pointlabels with the ones of the underlying node
         self._pointlabels = self._node._labels
         # subtracting any intersections from the labels
-        intersectiondict = self._shapegraph.complex._intersection_dict
+        intersectiondict = self._mapper.complex._intersection_dict
         for simplex in intersectiondict.keys():  # type(simplex) == tuple
             # extracting points that belong to self._node
             if self._node._id in simplex:
@@ -87,18 +84,20 @@ class DisambiguatedNode():
         assert self._myonlyzeros is not None
 
     def _findresponsevalues(self, y):
-        """Helper function called by __init__()
+        """Helper function called by _predmap.BinaryClassifier._disambiguate._initiatesupernodes()
 
         Args:
             y (np.ndarray): array containing the response values of the whole training set
                 used to construct the mapper"""
         self._responsevalues = y[self._pointlabels]
-        self.myfiltervalues = self._shapegraph.filter_values[self._pointlabels]
+        self.myfiltervalues = self._mapper.filter_values[self._pointlabels]
         self._min = min(self.myfiltervalues)
         self._max = max(self.myfiltervalues)
 
     def _setmajorityvote(self):
-        """Helper function called by __init__()"""
+        """Helper function called by _predmap.BinaryClassifier._disambiguate._initiatesupernodes().
+        self._extraones and self._extrazeros are needed to compute the score function
+        """
 
         self._ones = int(np.sum(self._responsevalues))
         self._zeros = int(self._size - self._ones)
@@ -113,17 +112,17 @@ class DisambiguatedNode():
         assert self._extraones is not None
         assert self._extrazeros is not None
 
-    def __init__(self, node, fiber, shapegraph):
+    def __init__(self, node, fiber, mapper):
         """
         Args:
-            node (sg.Node): node
-            fiber (sg.Fiber): fiber that contains node
-            shapegraph (sg.ShapeGraph): shapegraph object
+            node (lmapper.complex.Node): node
+            fiber (lmapper.cover.Fiber): fiber that contains node
+            mapper (lmapper._mapper.Mapper): Mapper object
             y (np.ndarray): one dimensional array containing the labels of all the data
-                points contained in shapegraph.data"""
+                points contained in lmapper._mapper.Mapper.data"""
         self._node = node
         self._fiber = fiber
-        self._shapegraph = shapegraph
+        self._mapper = mapper
         self._pointlabels = None
         self._score = None
         self._responsevalues = None
@@ -149,6 +148,7 @@ class DisambiguatedNode():
         self._myonlyzeros = None
 
     def _applyscorefunction(self, a):
+        """Helper function called by _predmap.BinaryClassifier._applyscorefunction"""
         self._score = a * abs(self._myonlyones - self._myonlyzeros) + (1-a) * abs(self._extraones - self._extrazeros)
         print('score: ', self._score)
 
@@ -156,6 +156,8 @@ class DisambiguatedNode():
         """This function
             - computes the values of g(k, x) for every k, x
             - computes the corresponding max_{k}{g} and argmax_{k}{g}
+
+            Helper function called by _predmap.BinaryClassifier._computeintervals()
 
             Args:
                 beta (float): exponent of the factor (1/k)^beta used in the calculation of
@@ -228,6 +230,11 @@ class DisambiguatedNode():
             pass
 
     def _intervals_to_flip(self, _lambda, verbose):
+        """Helper function called by _predmap.BinaryClassifier._intervals_to_flip()
+        It modifies the attribute sel._intervals by instantiating objects
+        of class Interval corresponding to intervals where the prediction
+        has to be the minorityvote"""
+
         shouldswitch = int(np.round(self._score*_lambda))
         if self._minorityvote:
             maxswitch = self._ones
