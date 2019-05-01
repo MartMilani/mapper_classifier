@@ -254,7 +254,7 @@ class BinaryClassifier():
                 supernode = self.partition[nodeid]
                 score_list.append(supernode._score)
             print(score_list)
-            print('S_min = {}, S_max = {}'.format(min(score_list), max(score_list)))
+            print('S_min = {}, S_max = {}'.format(np.min(score_list), np.max(score_list)))
 
     def _intervals_to_flip(self, verbose):
         """Helper function called by fit()

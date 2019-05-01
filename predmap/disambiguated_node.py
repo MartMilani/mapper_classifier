@@ -212,19 +212,22 @@ class DisambiguatedNode():
                     else:
                         oppositeclass += 1
                     if j:
-                        gk[i, j] = (float(sameclass) / float(j)) * (max(sameclass - oppositeclass, 0) ** beta)
+                        # gk[i, j] = (float(sameclass) / float(j)) * (max(sameclass - oppositeclass, 0) ** beta)
                         # thesis version:
-                        # gk[i, j] = (1 / j) * (max(sameclass - oppositeclass, 0) ** beta) * sameclass
+                        gk[i, j] = (1 / j) * (max(sameclass - oppositeclass, 0) ** beta) * sameclass
                     else:
                         gk[i, 0] = max(sameclass - oppositeclass, 0)
                         # gk[i, 0] should be = 1! use this fact to debug
         self._ks = np.argmax(gk, axis=1)
-        self._densitydetectors = [gk[i, k] for i, k in enumerate(self._ks)]  # should be np.max(gk, axis=1)
+        self._densitydetectors = np.max(gk, axis=1)  # should be np.max(gk, axis=1)
+        print("node ", self._node._id, ", ks= ", self._ks)
+        print("node ", self._node._id, ", ds= ", self._densitydetectors)
         # _ks = | k_0 k_1 ... k_N]
         # _densitydetectors = | d_0 d_1 ... d_N|
         # where d_i = gx[i, k_i] is the maximum value of gk in the i-th row
         self._intervalscores = np.argsort(self._densitydetectors)
-        # x = intervalscores[i]
+        print("node ", self._node._id, ", interval scores= ", self._intervalscores)
+        # x = intervalscores[-i-1]
         # Interval(x, _densitydetectors[x], _ks[x]) is the i-th interval to change
         if verbose:
             pass
@@ -249,8 +252,9 @@ class DisambiguatedNode():
 
         howmanycollapsed = 0
         for i in range(intervalstoswitch):
-            x = self._intervalscores[i]
+            x = self._intervalscores[-i-1]
             k = self._ks[x]
+            print("node ", self._node._id, ", x = ", x, ", k = ", k)
             if not k:  # this means that the interval is collapsed to the only point
                 howmanycollapsed += 1
                 continue
