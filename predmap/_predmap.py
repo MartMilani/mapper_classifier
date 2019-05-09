@@ -71,11 +71,7 @@ class BinaryClassifier():
 
         """
         def _findduplicatednodes(verbose):
-            """This works only for covers with p<50: takes care of at max 2 equal nodes.
-            If there are 3 equal nodes (belonging to three different fibers) this
-            algorithm will not work.
-
-            """
+            """"""
             duplicatednodes = set()
             alreadydone = []
             for fiber in self._mapper.cover:
@@ -172,7 +168,7 @@ class BinaryClassifier():
         # first, taking care of duplicated nodes by
         # 1) finding them
         # 2) eliminating entries from self._mapper.complex._intersection_dict
-        #    such that _disambiguateintersections() will not find a unique node
+        #    such that _disambiguateintersections() will find a unique node
         duplicatednodes = _findduplicatednodes(verbose)
         for nodeid in duplicatednodes:
             to_eliminate = []

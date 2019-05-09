@@ -30,7 +30,7 @@ def test(x, y):
 
     predictor = mapp.BinaryClassifier(mapper=mapper,
                                       response_values=y,
-                                      _lambda=0.2,
+                                      _lambda=0.015,
                                       a=0.5,
                                       beta=1)
     predictor.fit()
