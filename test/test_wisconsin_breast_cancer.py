@@ -26,6 +26,7 @@ def test(x, y):
                        cover=cover,
                        cluster=cluster)
     mapper.fit(skeleton_only=False)
+    
     print("dimension = ", mapper.complex._dimension)
 
     predictor = mapp.BinaryClassifier(mapper=mapper,

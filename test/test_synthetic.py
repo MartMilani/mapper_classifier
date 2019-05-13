@@ -9,8 +9,9 @@ import lmapper as lm
 from lmapper.filter import Projection
 from lmapper.cover import UniformCover
 from lmapper.cluster import Linkage
-import predmap as mapp
+from lmapper.datasets import synthetic_dataset
 from lmapper.cutoff import FirstGap
+import predmap as mapp
 
 
 def test(x, y):
@@ -34,7 +35,7 @@ def test(x, y):
 
     predictor = mapp.BinaryClassifier(mapper=mapper,
                                       response_values=y,
-                                      _lambda=0.15,
+                                      _lambda=0.0,
                                       a=0.5,
                                       beta=2)
     predictor.fit()  # .plot_majority_votes()
@@ -43,21 +44,9 @@ def test(x, y):
 
 
 def main():
-    from numpy import genfromtxt
-    x = genfromtxt('../../lmapper/lmapper/datasets/synthetic.csv',
-                   delimiter=',')
-
-    # preprocessing of data
-    # eliminating the first row of nans
-    x = x[1:]
-    # separating features and labels
-    y = np.asarray([row[3] for row in x])
-    x = np.asarray([row[0:3] for row in x])
-
+    x, y = synthetic_dataset()
     pred = test(x, y)
-
     print('ACCURACY: ', np.mean(pred == y))
-
     return 0
 
 
