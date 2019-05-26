@@ -1,4 +1,4 @@
-Lmapper
+predmap
 -------
 
 This package implements a classification algorithm based on Mapper.
