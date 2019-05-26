@@ -220,8 +220,6 @@ class DisambiguatedNode():
                         # gk[i, 0] should be = 1! use this fact to debug
         self._ks = np.argmax(gk, axis=1)
         self._densitydetectors = np.max(gk, axis=1)  # should be np.max(gk, axis=1)
-        print("node ", self._node._id, ", ks= ", self._ks)
-        print("node ", self._node._id, ", ds= ", self._densitydetectors)
         # _ks = | k_0 k_1 ... k_N]
         # _densitydetectors = | d_0 d_1 ... d_N|
         # where d_i = gx[i, k_i] is the maximum value of gk in the i-th row
